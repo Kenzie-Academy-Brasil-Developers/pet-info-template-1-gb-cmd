@@ -175,3 +175,39 @@
 ::-webkit-scrollbar-thumb {
   background-color: var(--brand-1);
 }
+
+/*MODALS*/
+dialog {
+  width: 700px;
+  padding: 2rem 1.5rem;
+}
+
+.modal__container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modal__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal__new_post {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modal__buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+#cancel__button, #publish__button {
+  padding: 7px 20px;
+}

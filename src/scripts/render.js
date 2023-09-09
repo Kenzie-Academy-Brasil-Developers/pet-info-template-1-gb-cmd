@@ -1,4 +1,4 @@
-import { getCurrentUserInfo, getAllPosts } from "./requests.js";
+import { getCurrentUserInfo, getAllPosts, getFullPost } from "./requests.js";
 
 // Renderiza todos os posts
 export async function renderAllPosts() {
@@ -6,8 +6,9 @@ export async function renderAllPosts() {
   postSection.innerHTML = "";
   const posts = await getAllPosts();
 
-  posts.forEach(async (post) => {
+  posts.reverse().forEach(async (post) => {
     const postArticle = await renderPost(post, true);
+    
     postSection.appendChild(postArticle);
   });
 }
@@ -33,6 +34,60 @@ async function renderPost(post) {
   openButton.classList.add("post__open", "text3", "bold");
   openButton.innerText = "Acessar publicação";
   openButton.dataset.id = post.id;
+
+  openButton.addEventListener("click", async (event) => {
+    const fullPostModal = document.querySelector(".modal_full_post");
+    const fullPostContainer = document.querySelector(".full_post__container");
+
+    fullPostContainer.innerHTML = "";
+
+    const postId = event.target.dataset.id;
+
+    const fullPost =  await getFullPost(postId);
+    const postHeader = await renderPostHeader(post);
+    const lastChildHeader = postHeader.lastChild;
+  
+    if(lastChildHeader.className === "post__actions") {
+      lastChildHeader.innerHTML = "";
+
+      const exitModalButton = document.createElement("button")
+      exitModalButton.classList.add("post__button--edit", "btn", "btn--gray", "btn--small", "text4");
+      exitModalButton.innerText = "X";
+
+      lastChildHeader.appendChild(exitModalButton);
+
+      exitModalButton.addEventListener("click", () => {
+        fullPostModal.close();
+      });
+
+    }else {
+      const postActionDiv = document.createElement("div");
+      postActionDiv.classList.add("post__actions");
+
+      const exitModalButton = document.createElement("button");
+      exitModalButton.classList.add("post__button--edit", "btn", "btn--gray", "btn--small", "text4");
+      exitModalButton.innerText = "X";
+
+      postActionDiv.appendChild(exitModalButton);
+      postHeader.appendChild(postActionDiv);
+
+      exitModalButton.addEventListener("click", () => {
+        fullPostModal.close();
+      });
+    }
+
+    const postTitle = document.createElement("h2");
+    postTitle.classList.add("post__title", "text1", "bolder");
+    postTitle.innerText = fullPost.title;
+
+    const postContent = document.createElement("p");
+    postContent.classList.add("post__content", "text3");
+    postContent.innerText = fullPost.content;
+
+    fullPostContainer.append(postHeader, postTitle, postContent);
+    fullPostModal.showModal();
+  })
+
 
   postContainer.append(postHeader, postTitle, postContent, openButton);
 
